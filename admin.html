@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم | كابتن عُمر وائل</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+    :root {
+      --primary-red: #FF2E4D;
+      --primary-red-hover: #FF4763;
+      --primary-red-glow: rgba(255, 46, 77, 0.35);
+      --bg-black: #08090C;
+      --bg-surface: #12151D;
+      --bg-card: rgba(18, 22, 30, 0.95);
+      --border-subtle: rgba(255, 255, 255, 0.1);
+      --border-red: rgba(255, 46, 77, 0.4);
+      --text-white: #FFFFFF;
+      --text-light: #F3F4F6;
+      --text-muted: #9CA3AF;
+      --radius-sm: 8px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --radius-full: 9999px;
+      --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Cairo', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-black);
+      color: var(--text-white);
+      line-height: 1.6;
+      min-height: 100vh;
+      direction: rtl;
+    }
+
+    .container {
+      max-width: 1050px;
+      margin: 0 auto;
+      padding: 24px 20px;
+    }
+
+    /* Top Bar */
+    .admin-header {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 16px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(15px);
+    }
+    .header-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-box img {
+      height: 38px;
+    }
+    .brand-title h2 {
+      font-size: 1.15rem;
+      font-weight: 900;
+      line-height: 1.2;
+    }
+    .brand-title span {
+      font-size: 0.75rem;
+      color: var(--primary-red);
+      font-weight: 800;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 800;
+      font-size: 0.92rem;
+      padding: 10px 18px;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .btn-red {
+      background: var(--primary-red);
+      color: #FFFFFF;
+      box-shadow: 0 4px 15px var(--primary-red-glow);
+    }
+    .btn-red:hover {
+      background: var(--primary-red-hover);
+      transform: translateY(-2px);
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-light);
+    }
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: #FFFFFF;
+    }
+
+    /* Auth Overlay */
+    .login-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 9, 12, 0.98);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .login-card {
+      background: var(--bg-surface);
+      border: 1.5px solid var(--border-red);
+      border-radius: var(--radius-lg);
+      padding: 40px 30px;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 46, 77, 0.15);
+    }
+    .login-card h3 {
+      font-size: 1.5rem;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+    .login-card p {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      margin-bottom: 24px;
+    }
+    .pin-input {
+      width: 100%;
+      padding: 14px 16px;
+      background: #090B0F;
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      color: #FFFFFF;
+      font-size: 1.2rem;
+      font-weight: 800;
+      text-align: center;
+      letter-spacing: 4px;
+      margin-bottom: 20px;
+      outline: none;
+      transition: var(--transition);
+    }
+    .pin-input:focus {
+      border-color: var(--primary-red);
+      box-shadow: 0 0 15px var(--primary-red-glow);
+    }
+
+    /* Main Dashboard Layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 28px;
+      margin-top: 24px;
+    }
+
+    /* Form Card */
+    .panel-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    }
+    .panel-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.25rem;
+      font-weight: 900;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .panel-title i {
+      color: var(--primary-red);
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: #E2E8F0;
+      margin-bottom: 6px;
+    }
+    .form-control {
+      width: 100%;
+      padding: 12px 16px;
+      background: #0A0C11;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      color: #FFFFFF;
+      font-size: 0.95rem;
+      font-weight: 700;
+      outline: none;
+      transition: var(--transition);
+    }
+    .form-control:focus {
+      border-color: var(--primary-red);
+      box-shadow: 0 0 12px var(--primary-red-glow);
+    }
+    .form-row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    /* Image Upload Box */
+    .image-upload-box {
+      border: 2px dashed rgba(255, 255, 255, 0.2);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.02);
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .image-upload-box:hover {
+      border-color: var(--primary-red);
+      background: rgba(255, 46, 77, 0.04);
+    }
+    .image-upload-box i {
+      font-size: 2rem;
+      color: var(--primary-red);
+      margin-bottom: 8px;
+      display: block;
+    }
+    .image-upload-box span {
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: #E2E8F0;
+      display: block;
+    }
+    .image-upload-box small {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .image-preview-container {
+      margin-top: 12px;
+      position: relative;
+      display: none;
+    }
+    .image-preview-container img {
+      width: 100%;
+      max-height: 220px;
+      object-fit: cover;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+    }
+    .remove-image-btn {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #FF5E5E;
+      border: 1px solid #FF5E5E;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Features Builder */
+    .features-input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .feature-tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .feature-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 46, 77, 0.12);
+      border: 1px solid rgba(255, 46, 77, 0.3);
+      color: #FFFFFF;
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+    }
+    .feature-tag i {
+      color: #FF5E5E;
+      cursor: pointer;
+    }
+
+    /* Live Card Preview */
+    .preview-box {
+      position: sticky;
+      top: 90px;
+    }
+    .preview-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      color: var(--primary-red);
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+    .preview-card-mockup {
+      background: #0D1017;
+      border: 1.5px solid var(--border-red);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
+    }
+    .mockup-img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      display: none;
+      background: #14171F;
+    }
+    .mockup-body {
+      padding: 24px;
+    }
+    .mockup-ribbon {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 900;
+      padding: 3px 10px;
+      background: var(--primary-red);
+      color: #FFFFFF;
+      border-radius: var(--radius-full);
+      margin-bottom: 10px;
+    }
+    .mockup-title {
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: #FFFFFF;
+      margin-bottom: 4px;
+    }
+    .mockup-price {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--primary-red);
+      font-family: 'Outfit', sans-serif;
+      margin-bottom: 14px;
+    }
+    .mockup-price span {
+      font-size: 1rem;
+      color: #FFFFFF;
+      font-family: 'Cairo', sans-serif;
+    }
+    .mockup-price del {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-right: 8px;
+    }
+    .mockup-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 0.88rem;
+      color: var(--text-light);
+      margin-bottom: 18px;
+    }
+    .mockup-list li i {
+      color: #2ED573;
+      margin-left: 6px;
+    }
+
+    /* Saved Packages List */
+    .saved-packages-section {
+      margin-top: 36px;
+    }
+    .saved-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 16px;
+    }
+    .saved-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: var(--transition);
+    }
+    .saved-card:hover {
+      border-color: var(--border-red);
+      transform: translateY(-3px);
+    }
+    .saved-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .saved-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 0.82rem;
+      border-radius: var(--radius-sm);
+    }
+    .btn-danger {
+      background: rgba(255, 60, 60, 0.15);
+      border: 1px solid #FF5E5E;
+      color: #FF5E5E;
+    }
+    .btn-danger:hover {
+      background: #FF5E5E;
+      color: #FFFFFF;
+    }
+
+    @media (max-width: 860px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+      .preview-box {
+        position: static;
+      }
+      .form-row-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Authentication PIN Modal -->
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-card">
+      <img src="logo_white_transparent.png" alt="Omar Wael" style="height: 50px; margin-bottom: 16px;">
+      <h3>لوحة تحكم كابتن عُمر</h3>
+      <p>أدخل الرمز السري للدخول إلى إدارة الباقات والعروض</p>
+      
+      <form onsubmit="handleLogin(event)">
+        <input type="password" id="pinInput" class="pin-input" placeholder="••••" maxlength="6" autofocus>
+        <button type="submit" class="btn btn-red" style="width: 100%; padding: 14px;">
+          <i class="fa-solid fa-lock-open"></i>
+          <span>تسجيل الدخول</span>
+        </button>
+      </form>
+      <div id="loginError" style="color: #FF5E5E; font-size: 0.85rem; margin-top: 12px; display: none;">الرمز السري غير صحيح، حاول مرة أخرى</div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="admin-header">
+    <div class="container">
+      <div class="header-wrapper">
+        <div class="brand-box">
+          <img src="logo_white_transparent.png" alt="Logo">
+          <div class="brand-title">
+            <h2>كابتن عُمر وائل</h2>
+            <span>لوحة التحكم وإدارة العروض</span>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <a href="index.html" class="btn btn-outline" target="_blank">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            <span>معاينة الموقع الحقيقي</span>
+          </a>
+          <button class="btn btn-outline" onclick="logout()" title="تسجيل الخروج">
+            <i class="fa-solid fa-right-from-bracket"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="container">
+    <div class="dashboard-grid">
+      
+      <!-- Add / Edit Offer Form -->
+      <div class="panel-card">
+        <div class="panel-title">
+          <i class="fa-solid fa-plus-circle"></i>
+          <span>إضافة باقة أو عرض جديد للموقع</span>
+        </div>
+
+        <form id="packageForm" onsubmit="savePackage(event)">
+          <div class="form-group">
+            <label>اسم الباقة أو العرض *</label>
+            <input type="text" id="pkgTitle" class="form-control" placeholder="مثال: باقة الشهرين تضخيم، أو عرض العيد" required oninput="updateLivePreview()">
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label>نوع الباقة *</label>
+              <select id="pkgType" class="form-control" onchange="updateLivePreview()">
+                <option value="gym">تدريب شخصي بالجيم (العاشر من رمضان)</option>
+                <option value="online">تدريب ومتابعة أونلاين</option>
+                <option value="group">عرض مجموعات (3 أفراد فأكثر)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>شارة ترويجية (Badge)</label>
+              <input type="text" id="pkgBadge" class="form-control" placeholder="مثال: خصم 20%، الأكثر طلباً ⭐" oninput="updateLivePreview()">
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label>السعر المطلوب (EGP) *</label>
+              <input type="number" id="pkgPrice" class="form-control" placeholder="مثال: 1499" required oninput="updateLivePreview()">
+            </div>
+
+            <div class="form-group">
+              <label>السعر قبل الخصم (اختياري)</label>
+              <input type="number" id="pkgOldPrice" class="form-control" placeholder="مثال: 1999" oninput="updateLivePreview()">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>مدة الباقة أو عدد الحصص</label>
+            <input type="text" id="pkgDuration" class="form-control" placeholder="مثال: 60 يوم • 24 حصة خاصة" oninput="updateLivePreview()">
+          </div>
+
+          <!-- Image Upload with Gallery Picker -->
+          <div class="form-group">
+            <label>صورة البوستر أو العرض (اختياري)</label>
+            <div class="image-upload-box" onclick="document.getElementById('imageFileInput').click()">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+              <span>اضغط لاختيار صورة من الموبايل أو المعرض</span>
+              <small>يدعم صيغ JPG و PNG بضغطة واحدة</small>
+            </div>
+            <input type="file" id="imageFileInput" accept="image/*" style="display: none;" onchange="handleImageSelected(this)">
+            
+            <div class="image-preview-container" id="previewContainer">
+              <img id="imagePreview" src="" alt="Preview">
+              <button type="button" class="remove-image-btn" onclick="removeSelectedImage()" title="حذف الصورة">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Features List -->
+          <div class="form-group">
+            <label>مميزات الباقة (أضف النقاط خطوة بخطوة)</label>
+            <div class="features-input-row">
+              <input type="text" id="featureTextInput" class="form-control" placeholder="مثال: دايت مخصص بالأكلات اللي بتحبها">
+              <button type="button" class="btn btn-outline" onclick="addFeature()">
+                <i class="fa-solid fa-plus"></i> إضافة
+              </button>
+            </div>
+            <div class="feature-tag-list" id="featuresList"></div>
+          </div>
+
+          <button type="submit" class="btn btn-red" style="width: 100%; padding: 14px; font-size: 1.05rem; margin-top: 10px;">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <span>نشر الباقة الآن على الموقع</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Live Mockup Preview -->
+      <div class="preview-box">
+        <span class="preview-badge"><i class="fa-solid fa-eye"></i> معاينة شكل الكارت على الموقع قبل النشر:</span>
+        <div class="preview-card-mockup">
+          <img id="mockupImg" class="mockup-img" src="" alt="Mockup">
+          <div class="mockup-body">
+            <div id="mockupRibbon" class="mockup-ribbon">عرض خاص 🔥</div>
+            <h3 id="mockupTitle" class="mockup-title">اسم الباقة هنا</h3>
+            <p id="mockupDuration" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">30 Days Coaching</p>
+            <div class="mockup-price">
+              <del id="mockupOldPrice" style="display: none;">2,499</del>
+              <span id="mockupPriceVal">1,999</span> <span>EGP</span>
+            </div>
+            <ul class="mockup-list" id="mockupFeatures">
+              <li><i class="fa-solid fa-check"></i> <span>جدول تدريب مخصص لجسمك</span></li>
+              <li><i class="fa-solid fa-check"></i> <span>خطة دايت محسوبة السعرات</span></li>
+              <li><i class="fa-solid fa-check"></i> <span>متابعة مستمرة وتصحيح تكنيك</span></li>
+            </ul>
+            <button class="btn btn-red" style="width: 100%; pointer-events: none;">
+              <i class="fa-brands fa-whatsapp"></i>
+              <span>حجز الباقة عبر واتساب</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Currently Active Custom Packages -->
+    <section class="saved-packages-section">
+      <div class="panel-title">
+        <i class="fa-solid fa-list-check"></i>
+        <span>الباقات والعروض المضافة حالياً (<span id="savedCount">0</span>)</span>
+      </div>
+      <div class="saved-grid" id="savedGrid">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const DEFAULT_PIN = '1234';
+    let currentImageBase64 = '';
+    let currentFeatures = [
+      'جدول تدريب مصمم خصيصاً لهدفك',
+      'خطة دايت محسوبة الماكروز بدون حرمان',
+      'تصحيح تكنيك التمارين ومنع الإصابات',
+      'متابعة مستمرة وتحديث أسبوعي'
+    ];
+
+    // Auth check
+    function checkAuth() {
+      const isAuth = localStorage.getItem('omar_admin_auth');
+      const overlay = document.getElementById('loginOverlay');
+      if (isAuth === 'true') {
+        overlay.style.display = 'none';
+      } else {
+        overlay.style.display = 'flex';
+      }
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const input = document.getElementById('pinInput').value;
+      const err = document.getElementById('loginError');
+      if (input === DEFAULT_PIN || input === 'omar2026') {
+        localStorage.setItem('omar_admin_auth', 'true');
+        document.getElementById('loginOverlay').style.display = 'none';
+        err.style.display = 'none';
+      } else {
+        err.style.display = 'block';
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('omar_admin_auth');
+      checkAuth();
+    }
+
+    // Image handling
+    function handleImageSelected(input) {
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          currentImageBase64 = e.target.result;
+          document.getElementById('imagePreview').src = currentImageBase64;
+          document.getElementById('previewContainer').style.display = 'block';
+          updateLivePreview();
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    function removeSelectedImage() {
+      currentImageBase64 = '';
+      document.getElementById('imageFileInput').value = '';
+      document.getElementById('previewContainer').style.display = 'none';
+      updateLivePreview();
+    }
+
+    // Features handling
+    function renderFeatures() {
+      const list = document.getElementById('featuresList');
+      list.innerHTML = '';
+      currentFeatures.forEach((f, idx) => {
+        const tag = document.createElement('div');
+        tag.className = 'feature-tag';
+        tag.innerHTML = `<span>${f}</span> <i class="fa-solid fa-xmark" onclick="removeFeature(${idx})"></i>`;
+        list.appendChild(tag);
+      });
+      updateLivePreview();
+    }
+
+    function addFeature() {
+      const input = document.getElementById('featureTextInput');
+      const val = input.value.trim();
+      if (val) {
+        currentFeatures.push(val);
+        input.value = '';
+        renderFeatures();
+      }
+    }
+
+    function removeFeature(idx) {
+      currentFeatures.splice(idx, 1);
+      renderFeatures();
+    }
+
+    // Live preview sync
+    function updateLivePreview() {
+      const title = document.getElementById('pkgTitle').value || 'اسم الباقة هنا';
+      const price = document.getElementById('pkgPrice').value || '1,999';
+      const oldPrice = document.getElementById('pkgOldPrice').value;
+      const badge = document.getElementById('pkgBadge').value || 'عرض مخصص 🔥';
+      const duration = document.getElementById('pkgDuration').value || '30 Days Coaching';
+
+      document.getElementById('mockupTitle').textContent = title;
+      document.getElementById('mockupPriceVal').textContent = Number(price).toLocaleString();
+      document.getElementById('mockupDuration').textContent = duration;
+
+      const ribbon = document.getElementById('mockupRibbon');
+      if (badge) {
+        ribbon.style.display = 'inline-block';
+        ribbon.textContent = badge;
+      } else {
+        ribbon.style.display = 'none';
+      }
+
+      const del = document.getElementById('mockupOldPrice');
+      if (oldPrice) {
+        del.style.display = 'inline';
+        del.textContent = Number(oldPrice).toLocaleString();
+      } else {
+        del.style.display = 'none';
+      }
+
+      const img = document.getElementById('mockupImg');
+      if (currentImageBase64) {
+        img.src = currentImageBase64;
+        img.style.display = 'block';
+      } else {
+        img.style.display = 'none';
+      }
+
+      const featContainer = document.getElementById('mockupFeatures');
+      featContainer.innerHTML = '';
+      currentFeatures.forEach(f => {
+        const li = document.createElement('li');
+        li.innerHTML = `<i class="fa-solid fa-check"></i> <span>${f}</span>`;
+        featContainer.appendChild(li);
+      });
+    }
+
+    // Save package
+    function getStoredPackages() {
+      try {
+        return JSON.parse(localStorage.getItem('omar_custom_packages')) || [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveStoredPackages(pkgs) {
+      localStorage.setItem('omar_custom_packages', JSON.stringify(pkgs));
+      renderSavedPackages();
+    }
+
+    function savePackage(e) {
+      e.preventDefault();
+      const title = document.getElementById('pkgTitle').value.trim();
+      const price = document.getElementById('pkgPrice').value.trim();
+      const oldPrice = document.getElementById('pkgOldPrice').value.trim();
+      const type = document.getElementById('pkgType').value;
+      const badge = document.getElementById('pkgBadge').value.trim();
+      const duration = document.getElementById('pkgDuration').value.trim();
+
+      const newPkg = {
+        id: 'pkg_' + Date.now(),
+        title,
+        price,
+        oldPrice,
+        type,
+        badge,
+        duration,
+        image: currentImageBase64,
+        features: [...currentFeatures],
+        createdAt: new Date().toISOString()
+      };
+
+      const pkgs = getStoredPackages();
+      pkgs.unshift(newPkg);
+      saveStoredPackages(pkgs);
+
+      alert('تم حفظ ونشر الباقة بنجاح!');
+      document.getElementById('packageForm').reset();
+      removeSelectedImage();
+      updateLivePreview();
+    }
+
+    function deletePackage(id) {
+      if (confirm('هل أنت متأكد من حذف هذه الباقة؟')) {
+        let pkgs = getStoredPackages();
+        pkgs = pkgs.filter(p => p.id !== id);
+        saveStoredPackages(pkgs);
+      }
+    }
+
+    function renderSavedPackages() {
+      const pkgs = getStoredPackages();
+      document.getElementById('savedCount').textContent = pkgs.length;
+      const container = document.getElementById('savedGrid');
+      container.innerHTML = '';
+
+      if (pkgs.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem; grid-column: 1/-1;">لا توجد باقات مضافة يدوياً حتى الآن، الموقع يعرض الباقات الأساسية الرسمية.</p>';
+        return;
+      }
+
+      pkgs.forEach(pkg => {
+        const card = document.createElement('div');
+        card.className = 'saved-card';
+        card.innerHTML = `
+          <div>
+            <div class="saved-header">
+              <span class="mockup-ribbon" style="font-size: 0.7rem;">${pkg.badge || pkg.type.toUpperCase()}</span>
+              <span style="font-size: 0.8rem; color: var(--text-muted);">${new Date(pkg.createdAt).toLocaleDateString('ar-EG')}</span>
+            </div>
+            ${pkg.image ? `<img src="${pkg.image}" style="width: 100%; height: 120px; object-fit: cover; border-radius: var(--radius-sm); margin-bottom: 10px;">` : ''}
+            <h4 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 4px;">${pkg.title}</h4>
+            <div style="font-family: 'Outfit'; font-size: 1.4rem; color: var(--primary-red); font-weight: 900; margin-bottom: 8px;">
+              ${Number(pkg.price).toLocaleString()} <span style="font-family: 'Cairo'; font-size: 0.85rem; color: #FFF;">EGP</span>
+            </div>
+            <ul style="list-style: none; font-size: 0.82rem; color: var(--text-muted);">
+              ${pkg.features.slice(0, 3).map(f => `<li>• ${f}</li>`).join('')}
+              ${pkg.features.length > 3 ? `<li>+ ${pkg.features.length - 3} مميزات أخرى</li>` : ''}
+            </ul>
+          </div>
+          <div class="saved-actions">
+            <button class="btn btn-sm btn-danger" onclick="deletePackage('${pkg.id}')">
+              <i class="fa-solid fa-trash"></i> حذف
+            </button>
+            <a href="index.html" target="_blank" class="btn btn-sm btn-outline" style="margin-right: auto;">
+              <i class="fa-solid fa-eye"></i> معاينة بالموقع
+            </a>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Init
+    checkAuth();
+    renderFeatures();
+    renderSavedPackages();
+    updateLivePreview();
+  </script>
+</body>
+</html>

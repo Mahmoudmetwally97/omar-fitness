@@ -155,7 +155,50 @@ document.getElementById('currentYear').textContent = new Date().getFullYear();
     }
 
     // Scroll Reveal Observer
+    // Dynamic Custom Packages from Admin
+    function loadCustomPackages() {
+      try {
+        const pkgs = JSON.parse(localStorage.getItem('omar_custom_packages')) || [];
+        pkgs.forEach(pkg => {
+          const targetGrid = pkg.type === 'online' 
+            ? document.getElementById('pricingGridOnline') 
+            : document.getElementById('pricingGridGym');
+
+          if (!targetGrid) return;
+
+          const card = document.createElement('div');
+          card.className = 'pricing-card featured reveal active';
+          card.innerHTML = `
+            ${pkg.badge ? `<div class="featured-ribbon">${pkg.badge}</div>` : '<div class="featured-ribbon">عرض جديد ⭐</div>'}
+            ${pkg.image ? `<img src="${pkg.image}" style="width: 100%; height: 160px; object-fit: cover; border-radius: var(--radius-sm); margin-bottom: 14px;">` : ''}
+            <div class="pricing-header">
+              <div class="pricing-tag-duration">
+                <i class="fa-regular fa-calendar-check"></i>
+                <span>${pkg.title}</span>
+              </div>
+              <div class="price-value-row">
+                <span class="price-main-number" style="color: var(--primary-red);">${Number(pkg.price).toLocaleString()}</span>
+                <span class="price-currency">EGP</span>
+                ${pkg.oldPrice ? `<span class="old-price-strikethrough">${Number(pkg.oldPrice).toLocaleString()}</span>` : ''}
+              </div>
+              ${pkg.duration ? `<p class="price-note-sub">${pkg.duration}</p>` : ''}
+            </div>
+            <ul class="package-features-list">
+              ${pkg.features.map(f => `<li><i class="fa-solid fa-check"></i> <span>${f}</span></li>`).join('')}
+            </ul>
+            <a href="https://wa.me/966545311416?text=${encodeURIComponent('مرحباً كابتن عمر، أرغب في الاشتراك في: ' + pkg.title + ' بسعر ' + pkg.price + ' EGP')}" target="_blank" class="btn btn-red btn-pulse">
+              <span>احجز الآن عبر واتساب</span>
+              <i class="fa-brands fa-whatsapp"></i>
+            </a>
+          `;
+          targetGrid.prepend(card);
+        });
+      } catch (e) {}
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
+      loadCustomPackages();
+
       const reveals = document.querySelectorAll('.reveal, .feature-card, .pricing-card, .group-offer-banner-card, .calc-card-container, .faq-card');
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
