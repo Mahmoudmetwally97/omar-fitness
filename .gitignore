@@ -1,3 +1,9 @@
 *.backup.*
 *.ps1
 node_modules/
+backup_*/
+*.zip
+fast_server.js
+*.pdf
+asst/
+assets/

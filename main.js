@@ -121,6 +121,16 @@ document.getElementById('currentYear').textContent = new Date().getFullYear();
       window.open(`https://wa.me/966545311416?text=${encodeURIComponent(message)}`, '_blank');
     }
 
+    // Live listener for macro calculator inputs
+    const calcInputs = ['calcGender', 'calcAge', 'calcWeight', 'calcHeight', 'calcActivity', 'calcGoal'];
+    calcInputs.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('input', calculateMacros);
+        el.addEventListener('change', calculateMacros);
+      }
+    });
+
     window.addEventListener('DOMContentLoaded', calculateMacros);
 
     // Mobile Drawer Toggle
@@ -154,8 +164,7 @@ document.getElementById('currentYear').textContent = new Date().getFullYear();
       }
     }
 
-    // Scroll Reveal Observer
-    // Dynamic Custom Packages from Admin
+    // Dynamic Custom Packages from Admin (Hardware-Grade Modernized)
     function loadCustomPackages() {
       try {
         const pkgs = JSON.parse(localStorage.getItem('omar_custom_packages')) || [];
@@ -167,49 +176,80 @@ document.getElementById('currentYear').textContent = new Date().getFullYear();
           if (!targetGrid) return;
 
           const card = document.createElement('div');
-          card.className = 'pricing-card featured reveal active';
+          card.className = 'pricing-card-shell featured';
           card.innerHTML = `
-            ${pkg.badge ? `<div class="featured-ribbon">${pkg.badge}</div>` : '<div class="featured-ribbon">عرض جديد ⭐</div>'}
-            ${pkg.image ? `<img src="${pkg.image}" style="width: 100%; height: 160px; object-fit: cover; border-radius: var(--radius-sm); margin-bottom: 14px;">` : ''}
-            <div class="pricing-header">
-              <div class="pricing-tag-duration">
-                <i class="fa-regular fa-calendar-check"></i>
-                <span>${pkg.title}</span>
+            ${pkg.badge ? `<span class="pricing-badge-featured font-termina">${pkg.badge}</span>` : '<span class="pricing-badge-featured font-termina">SPECIAL OFFER</span>'}
+            <div class="pricing-card-core">
+              <div>
+                ${pkg.image ? `<img src="${pkg.image}" style="width: 100%; height: 160px; object-fit: cover; border-radius: var(--radius-sm); margin-bottom: 14px; border: 1px solid var(--border-glass);">` : ''}
+                <div class="pricing-title-row">
+                  <div class="duration-tag">${pkg.title}</div>
+                  ${pkg.duration ? `<span class="sessions-badge font-termina">${pkg.duration}</span>` : ''}
+                </div>
+                <div class="price-display-row font-termina">
+                  <span class="price-main">${Number(pkg.price).toLocaleString()}</span>
+                  <span class="price-curr">EGP</span>
+                  ${pkg.oldPrice ? `<span style="font-size: 1.1rem; text-decoration: line-through; color: var(--text-dim); margin-right: 8px;">${Number(pkg.oldPrice).toLocaleString()}</span>` : ''}
+                </div>
+                <p class="price-sub">باقة مخصصة بإشراف كابتن عمر وائل المباشر</p>
+                <ul class="features-check-list">
+                  ${pkg.features.map(f => `<li><i class="fa-solid fa-check"></i> <span>${f}</span></li>`).join('')}
+                </ul>
               </div>
-              <div class="price-value-row">
-                <span class="price-main-number" style="color: var(--primary-red);">${Number(pkg.price).toLocaleString()}</span>
-                <span class="price-currency">EGP</span>
-                ${pkg.oldPrice ? `<span class="old-price-strikethrough">${Number(pkg.oldPrice).toLocaleString()}</span>` : ''}
-              </div>
-              ${pkg.duration ? `<p class="price-note-sub">${pkg.duration}</p>` : ''}
+              <a href="https://wa.me/966545311416?text=${encodeURIComponent('مرحباً كابتن عمر، أرغب في الاشتراك في: ' + pkg.title + ' بسعر ' + pkg.price + ' EGP')}" target="_blank" class="btn-pill-nested btn-pulse" style="width: 100%; justify-content: center;">
+                <span>احجز الآن عبر واتساب</span>
+                <span class="btn-icon-wrapper"><i class="fa-brands fa-whatsapp"></i></span>
+              </a>
             </div>
-            <ul class="package-features-list">
-              ${pkg.features.map(f => `<li><i class="fa-solid fa-check"></i> <span>${f}</span></li>`).join('')}
-            </ul>
-            <a href="https://wa.me/966545311416?text=${encodeURIComponent('مرحباً كابتن عمر، أرغب في الاشتراك في: ' + pkg.title + ' بسعر ' + pkg.price + ' EGP')}" target="_blank" class="btn btn-red btn-pulse">
-              <span>احجز الآن عبر واتساب</span>
-              <i class="fa-brands fa-whatsapp"></i>
-            </a>
           `;
           targetGrid.prepend(card);
         });
       } catch (e) {}
     }
 
+    // Interactive Card Mouse Spotlight & Count-Up Engine
     document.addEventListener('DOMContentLoaded', () => {
       loadCustomPackages();
 
-      const reveals = document.querySelectorAll('.reveal, .feature-card, .pricing-card, .group-offer-banner-card, .calc-card-container, .faq-card');
-      const observer = new IntersectionObserver((entries) => {
+      // Card Spotlight Glow
+      const spotlightCards = document.querySelectorAll('.pain-card, .pricing-card-shell, .bento-hero-card, .bento-card, .trust-bento-card, .guarantee-card-bezel');
+      spotlightCards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          card.style.setProperty('--mouse-x', `${x}px`);
+          card.style.setProperty('--mouse-y', `${y}px`);
+        });
+      });
+
+      // Smooth Count-Up for Stat Numbers
+      const statElements = document.querySelectorAll('.metric-num');
+      let animatedStats = false;
+      const countUpObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('active');
+          if (entry.isIntersecting && !animatedStats) {
+            animatedStats = true;
+            statElements.forEach(el => {
+              const text = el.textContent.trim();
+              if (text.includes('144')) {
+                let start = 0;
+                const end = 144;
+                const timer = setInterval(() => {
+                  start += 4;
+                  if (start >= end) {
+                    el.textContent = '144+';
+                    clearInterval(timer);
+                  } else {
+                    el.textContent = start + '+';
+                  }
+                }, 35);
+              }
+            });
           }
         });
-      }, { threshold: 0.12 });
+      }, { threshold: 0.3 });
 
-      reveals.forEach(el => {
-        el.classList.add('reveal');
-        observer.observe(el);
-      });
+      const metricsGrid = document.querySelector('.hero-metrics-bento');
+      if (metricsGrid) countUpObserver.observe(metricsGrid);
     });
